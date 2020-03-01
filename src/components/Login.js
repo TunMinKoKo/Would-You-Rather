@@ -28,6 +28,7 @@ class Login extends Component {
     handleSubmit = (e) => {
         e.preventDefault()
         this.props.dispatch(setAuthedUser(this.state.userToSignIn))
+        this.props.history.push(this.props.location.state.referrer);
     }
 
     renderForm = () => (
@@ -69,8 +70,8 @@ class Login extends Component {
     }
 }
 
-function mapStateToProps ({ users ,questions}) {
-    return { users , questions }
+function mapStateToProps ({ users ,questions }) {
+    return { users , questions}
 }
 
 export default connect(mapStateToProps)(Login)

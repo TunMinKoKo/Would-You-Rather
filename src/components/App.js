@@ -12,13 +12,18 @@ import Leaderboard from "./Leaderboard";
 class App extends Component {
 
   componentDidMount() {
-      this.props.dispatch(handleInitialData())
+      this.props.getData(handleInitialData())
   }
 
-  guestRoutes = () => (
+  guestRoutes = (currentLocation) => (
       <Switch>
         <Route exact path='/' component={Login} />
-        <Redirect from='*' to='/' />
+          <Redirect
+              to={{
+                  pathname: "/",
+                  state: { referrer: currentLocation }
+              }}
+          />
       </Switch>
   )
 
@@ -28,18 +33,19 @@ class App extends Component {
          <Route path="/questions/:id" component={QuestionDetails} />
          <Route path="/add" component={newQuestion} />
          <Route path="/leaderboard" component={Leaderboard} />
-         <Redirect from='*' to='/' />
        </Switch>
    )
 
   render() {
+    const currentLocation = window.location.pathname
     return (
         <BrowserRouter>
             <Fragment>
                 <div>
                     <Navigation/>
-                    {this.props.notLoggedIn
-                        ? this.guestRoutes()
+                    {
+                        this.props.notLoggedIn
+                        ? this.guestRoutes(currentLocation)
                         : this.authedRoutes()
                     }
                 </div>
@@ -51,8 +57,13 @@ class App extends Component {
 
 function mapStateToProps ({ authedUser}) {
   return {
-      notLoggedIn: authedUser === null
+      notLoggedIn: authedUser === null,
   }
 }
 
-export default connect(mapStateToProps)(App)
+function mapDispatchToProps(dispatch) {
+    return {
+        getData: () => dispatch(handleInitialData()),
+    }
+};
+export default connect(mapStateToProps,mapDispatchToProps)(App)
