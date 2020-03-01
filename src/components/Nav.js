@@ -9,6 +9,7 @@ class Navigation extends Component {
     logout = (e) => {
         e.preventDefault()
         this.props.dispatch(unsetAuthedUser())
+        this.props.history.push('/');
     }
 
     render() {

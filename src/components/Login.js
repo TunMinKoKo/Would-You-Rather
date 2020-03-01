@@ -28,7 +28,13 @@ class Login extends Component {
     handleSubmit = (e) => {
         e.preventDefault()
         this.props.dispatch(setAuthedUser(this.state.userToSignIn))
-        this.props.history.push(this.props.location.state.referrer);
+        if(this.props.location.state !== undefined){
+            const referrer = this.props.location.state.referrer
+            this.props.history.push(referrer);
+        }else{
+            const referrer = '/'
+            this.props.history.push(referrer);
+        }
     }
 
     renderForm = () => (
