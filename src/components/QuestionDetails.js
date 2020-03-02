@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Row, Card, Button, Col, Form, ProgressBar,Container, ListGroup, Badge } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { handleAnswer } from '../actions/shared';
+import { Redirect } from 'react-router-dom'
 
 class QuestionDetails extends Component {
     state = {
@@ -20,8 +21,11 @@ class QuestionDetails extends Component {
     };
 
     render() {
-        const { question, questionAuthor, answer, total, percOne, percTwo} = this.props;
+        const { question, questionAuthor, answer, total, percOne, percTwo, badPath} = this.props;
         const { selectedOption } = this.state;
+        if(badPath === true){
+            return <Redirect to="/questions/bad_id" />;
+        }
         return (
             <Container>
                 <Row>
@@ -82,23 +86,28 @@ function percentage(x) {
 
 function mapStateToProps ({ questions, users, authedUser }, { match }) {
     const answers = users[authedUser].answers;
-    let answer, percOne, percTwo, total;
+    let questionAuthor,answer, percOne, percTwo, total, badPath = false;
     const { id } = match.params;
     const question = questions[id];
-    if (answers.hasOwnProperty(question.id)) {
-        answer = answers[question.id]
+    if (question === undefined){
+        badPath = true
+    }else{
+        if (answers.hasOwnProperty(question.id)) {
+            answer = answers[question.id]
+        }
+        questionAuthor = users[question.author];
+        total = question.optionOne.votes.length + question.optionTwo.votes.length;
+        percOne = percentage((question.optionOne.votes.length / total) * 100);
+        percTwo = percentage((question.optionTwo.votes.length / total) * 100);
     }
-    const questionAuthor = users[question.author];
-    total = question.optionOne.votes.length + question.optionTwo.votes.length;
-    percOne = percentage((question.optionOne.votes.length / total) * 100);
-    percTwo = percentage((question.optionTwo.votes.length / total) * 100);
     return {
         question,
         questionAuthor,
         answer,
         total,
         percOne,
-        percTwo
+        percTwo,
+        badPath
     }
 }
 

@@ -8,6 +8,7 @@ import Navigation from "./Nav"
 import newQuestion from "./newQuestion";
 import { handleInitialData } from '../actions/shared'
 import Leaderboard from "./Leaderboard";
+import NoMatchPage from "./404";
 
 class App extends Component {
 
@@ -30,9 +31,11 @@ class App extends Component {
    authedRoutes = () => (
        <Switch>
          <Route exact path='/' component={Dashboard} />
+           <Route path="/questions/bad_id" component={NoMatchPage} />
          <Route path="/questions/:id" component={QuestionDetails} />
          <Route path="/add" component={newQuestion} />
          <Route path="/leaderboard" component={Leaderboard} />
+         <Route component={NoMatchPage} />
        </Switch>
    )
 
